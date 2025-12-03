@@ -8,7 +8,9 @@
   <div class="panel-body">
     <div class="center-panel">
       <!--Add tag to display a list of DocumentItem components-->
-      <cms-document-item></cms-document-item>
+      @for (documentEl of documents; track documentEl.id) {
+      <cms-document-item [document]="documentEl" (click)="onSelectDocument(documentEl)"></cms-document-item>
+      }
     </div>
   </div>
 </div>
