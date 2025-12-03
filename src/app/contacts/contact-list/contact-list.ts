@@ -29,9 +29,9 @@ export class ContactList {
     ),
   ];
 
-  constructor() {}
-
   onSelected(contact: Contact) {
     this.selectedContactEvent.emit(contact);
   }
+
+  constructor() {}
 }
