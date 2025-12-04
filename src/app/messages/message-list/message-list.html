@@ -9,14 +9,14 @@
       <div class="panel-body">
         <div class="row">
           <div class="col-xs-12">
-            <!--Add tag to load the MessageItemComponent-->
-            <cms-message-item *ngFor="let msg of messages" [message]="msg"></cms-message-item>
+            @for (messageEl of messages; track messageEl.id) {
+            <cms-message-item [message]="messageEl"></cms-message-item>
+            }
           </div>
         </div>
       </div>
       <div class="panel-footer">
-        <!--Add tag to load the MessageEditComponent-->
-        <cms-message-edit (addMessageEvent)="onAddMessage($event)"> </cms-message-edit>
+        <cms-message-edit></cms-message-edit>
       </div>
     </div>
   </div>
