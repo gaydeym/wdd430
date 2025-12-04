@@ -4,9 +4,6 @@
   </div>
 
   <div class="col-md-4">
-    <!--Add tag to load the DocumentDetailComponent here-->
-    @if (selectedDocument){
-    <cms-document-detail [document]="selectedDocument"></cms-document-detail>
-    }
+    <router-outlet></router-outlet>
   </div>
 </div>

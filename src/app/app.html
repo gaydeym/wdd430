@@ -1,15 +1,8 @@
-<cms-header (selectedFeatureEvent)="switchView($event)"> </cms-header>
-
+<cms-header> </cms-header>
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-      @switch (selectedFeature) { @case ('documents') {
-      <cms-documents></cms-documents>
-      } @case ('messages') {
-      <cms-message-list></cms-message-list>
-      } @case ('contacts') {
-      <cms-contacts></cms-contacts>
-      } }
+      <router-outlet></router-outlet>
     </div>
   </div>
 </div>
