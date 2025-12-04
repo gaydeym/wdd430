@@ -13,8 +13,8 @@ export class Documents implements OnInit {
   constructor(private documentsService: DocumentsService) {}
 
   ngOnInit() {
-    this.documentsService.documentSelectedEvent.subscribe((document: Document) => {
-      this.selectedDocument = document;
+    this.documentsService.documentListChangedEvent.subscribe((documentList: Document[]) => {
+      this.selectedDocument = documentList[0];
     });
   }
 }
