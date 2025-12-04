@@ -2,14 +2,13 @@
   <div class="panel-heading">
     <div class="row pad-left-right">
       <span class="pull-left title">Add Documents</span>
-      <a class="btn btn-success pull-right">Add Document</a>
+      <a class="btn btn-success pull-right" routerLink="new">Add Document</a>
     </div>
   </div>
   <div class="panel-body">
     <div class="center-panel">
-      <!--Add tag to display a list of DocumentItem components-->
       @for (documentEl of documents; track documentEl.id) {
-      <cms-document-item [document]="documentEl" (click)="onSelectDocument(documentEl)"></cms-document-item>
+      <cms-document-item [document]="documentEl"></cms-document-item>
       }
     </div>
   </div>
