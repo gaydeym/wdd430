@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Contact } from '../contact.model';
 import { ContactsService } from '../contacts.service';
 
@@ -28,5 +29,11 @@ export class ContactList implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.contactChangeSub.unsubscribe();
+  }
+
+  onDrop(event: CdkDragDrop<Contact[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(this.contacts, event.previousIndex, event.currentIndex);
+    }
   }
 }
