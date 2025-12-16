@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
-import { v4 as uuidv4 } from 'uuid';
 import { Message } from '../message.model';
 import { MessageService } from '../message.service';
+import { ContactsService } from '../../contacts/contacts.service';
 
 @Component({
   selector: 'cms-message-edit',
@@ -15,17 +15,20 @@ export class MessageEdit {
 
   @Output() addMessageEvent = new EventEmitter<Message>();
 
-  // IDs from contact list
-  currentSender: string = '1';
+  currentSender: string = '101';
 
-  constructor(private messageService: MessageService) {}
+  constructor(private messageService: MessageService, private contactsService: ContactsService) {}
 
   onSendMessage() {
     const subject = this.subjectInput.nativeElement.value;
     const msgText = this.msgTextInput.nativeElement.value;
-    const newId = uuidv4();
-    const newMessage = new Message(newId, subject, msgText, this.currentSender);
+
+    this.currentSender = '101';
+
+    const newMessage = new Message('temp', subject, msgText, this.currentSender);
+
     this.messageService.addMessage(newMessage);
+    this.onClear();
   }
 
   onClear() {

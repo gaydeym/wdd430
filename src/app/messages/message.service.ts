@@ -11,7 +11,7 @@ export class MessageService {
   messageChangedEvent = new Subject<Message[]>();
   maxMessageId: number = 0;
 
-  private messagesUrl = 'https://wdd430-975d9-default-rtdb.firebaseio.com/messages.json';
+  private messagesUrl = 'http://localhost:3000/messages';
 
   constructor(private http: HttpClient) {}
 
@@ -41,6 +41,7 @@ export class MessageService {
       },
       complete: () => {
         console.log('Message fetch complete');
+        console.log(this.messages);
       },
     });
   }
@@ -49,17 +50,22 @@ export class MessageService {
     return this.messages.find((message) => message.id === id) || null;
   }
 
-  addMessage(message: Message): void {
-    this.messages.push(message);
-    this.storeMessages();
-  }
+  addMessage(newMessage: Message): void {
+    if (!newMessage) {
+      return;
+    }
+    newMessage.id = '';
 
-  storeMessages() {
-    const messagesJson = JSON.stringify(this.messages);
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
-    this.http.put(this.messagesUrl, messagesJson, { headers }).subscribe(() => {
-      this.messageChangedEvent.next([...this.messages]);
-    });
+    this.http
+      .post<{ message: string; createdMessage: Message }>(this.messagesUrl, newMessage, {
+        headers: headers,
+      })
+      .subscribe((responseData) => {
+        console.log('Respuesta del servidor:', responseData);
+        this.messages.push(responseData.createdMessage);
+        this.messageChangedEvent.next(this.messages.slice());
+      });
   }
 }

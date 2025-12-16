@@ -16,7 +16,20 @@ export class MessageItem implements OnInit {
   constructor(private contactsService: ContactsService) {}
 
   ngOnInit(): void {
-    const contact: Contact | null = this.contactsService.getContact(this.message.sender);
-    this.messageSender = contact ? contact.name : 'Unknown';
+    if (!this.message || !this.message.sender) {
+      this.messageSender = 'Error - Could not find user';
+      return;
+    }
+    if (typeof this.message.sender === 'object') {
+      const sender = this.message.sender as Contact;
+      this.messageSender = sender.name;
+    } else {
+      const contact: Contact | null = this.contactsService.getContact(this.message.sender);
+      if (contact) {
+        this.messageSender = contact.name;
+      } else {
+        this.messageSender = 'Error - Could not find user';
+      }
+    }
   }
 }
