@@ -13,9 +13,7 @@ export class MessageService {
 
   private messagesUrl = 'https://wdd430-975d9-default-rtdb.firebaseio.com/messages.json';
 
-  constructor(private http: HttpClient) {
-    this.maxMessageId = this.getMaxId();
-  }
+  constructor(private http: HttpClient) {}
 
   getMaxId(): number {
     let maxId = 0;
@@ -31,9 +29,9 @@ export class MessageService {
   }
 
   getMessages() {
-    this.http.get<{ [key: string]: Message }>(this.messagesUrl).subscribe({
-      next: (messagesObj: { [key: string]: Message }) => {
-        this.messages = Object.values(messagesObj || {});
+    this.http.get<Message[]>(this.messagesUrl).subscribe({
+      next: (messages: Message[]) => {
+        this.messages = messages;
         this.maxMessageId = this.getMaxId();
 
         this.messageChangedEvent.next(this.messages.slice());
@@ -51,15 +49,8 @@ export class MessageService {
     return this.messages.find((message) => message.id === id) || null;
   }
 
-  addMessage(newMessage: Message): void {
-    if (!newMessage) {
-      return;
-    }
-
-    this.maxMessageId++;
-    newMessage.id = this.maxMessageId.toString();
-
-    this.messages.push(newMessage);
+  addMessage(message: Message): void {
+    this.messages.push(message);
     this.storeMessages();
   }
 

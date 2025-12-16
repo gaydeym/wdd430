@@ -18,9 +18,9 @@ export class ContactsService {
   private contactsUrl = 'https://wdd430-975d9-default-rtdb.firebaseio.com/contacts.json';
 
   getContacts() {
-    this.http.get<{ [key: string]: Contact }>(this.contactsUrl).subscribe({
-      next: (contactsObj: { [key: string]: Contact }) => {
-        this.contacts = Object.values(contactsObj || {});
+    this.http.get<Contact[]>(this.contactsUrl).subscribe({
+      next: (contacts: Contact[]) => {
+        this.contacts = contacts;
         this.maxContactId = this.getMaxId();
 
         this.contacts.sort((a, b) => {
