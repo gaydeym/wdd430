@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Subject } from 'rxjs';
+import { Subject, tap, Observable } from 'rxjs';
 import { Document } from './document.model';
 
 @Injectable({
@@ -14,13 +14,13 @@ export class DocumentsService {
   private documentsUrl = 'https://wdd430-975d9-default-rtdb.firebaseio.com/documents.json';
 
   constructor(private http: HttpClient) {
-    this.maxDocumentId = this.getMaxId();
+    this.documents = this.documents;
   }
 
   getDocuments() {
-    this.http.get<{ [key: string]: Document }>(this.documentsUrl).subscribe({
-      next: (documentsObj: { [key: string]: Document }) => {
-        this.documents = Object.values(documentsObj || {});
+    this.http.get<Document[]>(this.documentsUrl).subscribe({
+      next: (documents: Document[]) => {
+        this.documents = documents;
         this.maxDocumentId = this.getMaxId();
 
         this.documents.sort((a, b) => {
