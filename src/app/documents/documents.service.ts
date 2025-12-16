@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Subject, tap, Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 import { Document } from './document.model';
 
 @Injectable({
@@ -11,11 +11,12 @@ export class DocumentsService {
   documentListChangedEvent = new Subject<Document[]>();
   maxDocumentId: number = 0;
 
-  private documentsUrl = 'https://wdd430-975d9-default-rtdb.firebaseio.com/documents.json';
-
   constructor(private http: HttpClient) {
     this.documents = this.documents;
+    this.maxDocumentId = this.getMaxId();
   }
+
+  private documentsUrl = 'http://localhost:3000/documents';
 
   getDocuments() {
     this.http.get<Document[]>(this.documentsUrl).subscribe({
@@ -29,6 +30,7 @@ export class DocumentsService {
           return 0;
         });
         this.documentListChangedEvent.next(this.documents.slice());
+        console.log(this.documents);
       },
       error: (error: any) => {
         console.error('Error fetching documents:', error);
@@ -60,49 +62,54 @@ export class DocumentsService {
     if (!newDocument) {
       return;
     }
+    newDocument.id = '';
 
-    this.maxDocumentId++;
-    newDocument.id = this.maxDocumentId.toString();
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
-    this.documents.push(newDocument);
-
-    this.storeDocuments();
+    this.http
+      .post<{ message: string; document: Document }>(this.documentsUrl, newDocument, {
+        headers: headers,
+      })
+      .subscribe((responseData) => {
+        this.documents.push(responseData.document);
+        this.documentListChangedEvent.next(this.documents.slice());
+      });
   }
-
   updateDocument(originalDocument: Document, newDocument: Document) {
     if (!originalDocument || !newDocument) {
       return;
     }
 
-    const pos = this.documents.indexOf(originalDocument);
+    const pos = this.documents.findIndex((d) => d.id === originalDocument.id);
     if (pos < 0) {
       return;
     }
 
     newDocument.id = originalDocument.id;
-    this.documents[pos] = newDocument;
 
-    this.storeDocuments();
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+    this.http
+      .put(`${this.documentsUrl}/` + originalDocument.id, newDocument, {
+        headers: headers,
+      })
+      .subscribe((response) => {
+        this.documents[pos] = newDocument;
+        this.documentListChangedEvent.next(this.documents.slice());
+      });
   }
 
   deleteDocument(document: Document) {
     if (!document) {
       return;
     }
-    const pos = this.documents.indexOf(document);
+    const pos = this.documents.findIndex((d) => d.id === document.id);
     if (pos < 0) {
       return;
     }
-    this.documents.splice(pos, 1);
-    this.storeDocuments();
-  }
-
-  storeDocuments() {
-    const documentsJson = JSON.stringify(this.documents);
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-
-    this.http.put(this.documentsUrl, documentsJson, { headers }).subscribe(() => {
-      this.documentListChangedEvent.next([...this.documents]);
+    this.http.delete(`${this.documentsUrl}/` + document.id).subscribe((response) => {
+      this.documents.splice(pos, 1);
+      this.documentListChangedEvent.next(this.documents.slice());
     });
   }
 }

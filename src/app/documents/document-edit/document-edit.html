@@ -12,7 +12,8 @@
       <div class="row">
         <div class="col-sm-12 form-group">
           <label for="description">Document Description:</label>
-          <input type="text" id="description" class="form-control" size="120" max="255" name="description" ngModel />
+          <input type="text" id="description" class="form-control" size="120" max="255" name="description"
+            [(ngModel)]="document!.description" #description="ngModel" />
         </div>
       </div>
 
